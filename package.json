@@ -1,0 +1,36 @@
+{
+  "name": "simplegeolocation",
+  "version": "1.0.0",
+  "description": "simple geo location service for education purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node server",
+    "dev": "nodemon server",
+    "build": "browserify webmap.js -o assets/javascripts/webmap.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "drA666/geolocation"
+  },
+  "keywords": [
+    "auction"
+  ],
+  "author": "Olena",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "browserify": "^17.0.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.17.3",
+    "leaflet": "^1.7.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "axios": "^0.26.1",
+    "jest": "^27.5.1",
+    "nodemon": "^2.0.15"
+  }
+}
