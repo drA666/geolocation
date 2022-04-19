@@ -31,22 +31,22 @@ describe("read entities", () => {
 
 })  
 
-describe("test CRUD", () => {
+describe("test CRUD devices", () => {
   let entityId
   let last_data
   test("create, update, delete workflow", () => axios.post(endpoint1,{
-      name:"George Washington"
+      name:"Mac3"
     })
     .then( resp => {
       entityId = resp.data.id
-      expect(resp.data.name).toBe("George Washington")
+      expect(resp.data.name).toBe("Mac3")
       return axios.get(endpoint1)
     })
     .then( resp => {
       expect(resp.data.length).toBe(4)
       return axios.put(`${endpoint1}?id=${entityId}`, {
-        name:"George Washington",
-        photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg/240px-Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg"   
+        name:"Mac",
+        owner:"Me"   
       })
     })
     .then( resp => {
@@ -60,3 +60,23 @@ describe("test CRUD", () => {
     .then( resp => expect(resp.data.length).toBe(3))
   )
 })
+
+describe("read entities coords", () => {
+  
+  test("read complete collection of coords without options", () => axios.get(endpoint2)
+    .then( resp => expect(resp.data.length).toBe(3) )
+  )
+
+  test("read complete collection of coords without id", () => axios.get(`${endpoint2}?dummy=1`)
+    .then( resp => expect(resp.data.length).toBe(3))
+  )
+
+  test("read filtered coords by divece id from query", () => axios.get(`${endpoint2}?id=1`)
+    .then( resp => expect(resp.data.length).toBe(2))
+  )
+
+  test("read coords by unresolved id", () => axios.get(`${endpoint2}?id=xxx`)
+    .then( resp => expect(resp.data.length).toBe(0))
+  )
+
+})  
