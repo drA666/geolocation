@@ -1,0 +1,345 @@
+openapi: "3.0.2"
+
+
+info: 
+  
+  title: "EDU simple geolocation RESTfull service API"
+  
+  description: "This is EDU simple geolocation RESTfull service API "
+  
+  version: "0.1"
+  
+  contact:
+    name: "This is EDU simple geolocation RESTfull service API"
+    url: "http://localhost:8080/"
+    email: "L@gmail.com"
+  
+  license: 
+    name: "ECL 2.0"
+    url: "http://localhost:8080/license.html"
+
+    
+externalDocs:
+  description: "EDU simple geolocation RESTfull service API"
+  url: "https://dra666.github.io/"
+
+servers:
+  
+  - url: "http://localhost:8080"
+    description: "EDU simple geolocation RESTfull service API"
+    
+
+components:
+  
+  parameters:
+    id_in_path:
+      name: id
+      description: "Internal ID of data item"
+      required: true
+      in: path
+      schema:
+        type: string
+        default: 1
+
+  schemas:
+    item: 
+      type: "object"
+      properties:
+        id:
+          oneOf:  
+            - type: "string"
+            - type: "integer"
+        name: 
+          type: "string"
+        owner:
+          type: "string"
+    coord: 
+      type: "object"
+      properties:
+        id:
+          oneOf:  
+            - type: "string"
+            - type: "integer"
+        latitude: 
+          type: "number"
+        longitude:
+          type: "number"
+        timestamp:
+          type: "number"
+      
+    array_of_items:  
+      items:
+        $ref: '#/components/schemas/item'
+    array_of_coords:  
+      items:
+        $ref: '#/components/schemas/coord'
+  
+  responses:
+    get_response: 
+      description: "Successful response"
+      content:
+        application/json:
+          schema: 
+              $ref: '#/components/schemas/array_of_items'
+
+    get_response_coords: 
+      description: "Successful response"
+      content:
+        application/json:
+          schema: 
+              $ref: '#/components/schemas/array_of_coords'
+
+      
+
+paths:
+  /:
+    get: 
+      
+      summary: "Get general info about service"
+      
+      description: "Returns the page with service name"
+    
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            text/html:
+              schema:
+                type: "string"
+              example: "Not found"
+              
+  
+  "/api/devices/{id}":
+  
+    get:
+      summary: "Get data"
+      description: "Get data about geolocation devices"
+      tags: 
+        - "CRUD"
+      parameters:
+        - $ref: "#/components/parameters/id_in_path"
+      responses:
+        200: 
+          $ref: "#/components/responses/get_response"    
+    
+    delete:
+      summary: "Delete data"
+      description: "Delete the data item"
+      tags:
+        - "CRUD"
+        - "ITEM ID REQUIRED"
+        - "RETURNS ONE ITEM"
+      parameters:
+          - $ref: "#/components/parameters/id_in_path"
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/item'
+              example:
+                id: "0d0a7413-8f8d-48f7-adb1-0954b3733807"
+                name: "Android"
+                owner: "me"
+                      
+              
+  
+  /api/devices/:
+  
+    get:
+      summary: "Get data"
+      
+      description: "Get data about geolocation devices"
+      
+      tags: 
+        - "CRUD"
+        
+      parameters:
+        - name: id
+          description: "Internal ID of data item"
+          in: query
+          required: false
+          schema:
+            type: string
+            default: 
+      
+      responses:
+        200: 
+          $ref: "#/components/responses/get_response"    
+      
+    
+    post:
+      summary: "Create data"
+      
+      description: "Create data item"
+      
+      tags:
+        - "CRUD"
+        - "REQUEST BODY REQUIRED"
+        - "RETURNS ONE ITEM"
+        
+      requestBody:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/item"
+                  - required:
+                    - name
+              example: 
+                name: "Android"
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/item'
+              example:
+                name: "Android"
+                id: "0d0a7413-8f8d-48f7-adb1-0954b3733807"
+                
+    put:
+      summary: "Update data"
+      
+      description: "Update the data item, the data item will be replaced"
+      
+      tags:
+        - "CRUD"
+        - "REQUEST BODY REQUIRED"
+        - "ITEM ID REQUIRED"
+        - "RETURNS ONE ITEM"
+        
+      requestBody:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/item"
+                  - required:
+                      - id
+              example: 
+                id: "0d0a7413-8f8d-48f7-adb1-0954b3733807"
+                name: "Android"
+                owner: "me"
+                
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/item'
+              example:
+                name: "Android"
+                id: "0d0a7413-8f8d-48f7-adb1-0954b3733807"
+                owner: "me"
+                         
+    delete:
+      summary: "Delete data"
+      
+      description: "Delete the data item"
+      
+      tags:
+        - "CRUD"
+        - "ITEM ID REQUIRED"
+        - "RETURNS ONE ITEM"
+        
+      
+      parameters:
+        - name: id
+          description: "Internal ID of data item"
+          in: query
+          required: false
+          schema:
+            type: string
+            default:
+          example: "0d0a7413-8f8d-48f7-adb1-0954b3733807"  
+            
+            
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/item'
+              example:
+                id: "0d0a7413-8f8d-48f7-adb1-0954b3733807"
+                name: "Android"
+                owner: "me"
+
+
+  /api/coords/:
+  
+    get:
+      summary: "Get data"
+      
+      description: "Get data about geolocation coords"
+      
+      tags: 
+        - "CRUD"
+        
+      parameters:
+        - name: id
+          description: "ID of device"
+          in: query
+          required: false
+          schema:
+            type: string
+            default: 
+      
+      responses:
+        200: 
+          $ref: "#/components/responses/get_response_coords"    
+      
+    
+    post:
+      summary: "Send coordinates, timestamp"
+      
+      description: "Send coordinates, timestamp"
+      
+      tags:
+        - "CRUD"
+        - "REQUEST BODY REQUIRED"
+        - "RETURNS ONE ITEM"
+        
+      requestBody:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/coord"
+                  - required:
+                    - name
+              example: 
+                name: "Android"
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/coord'
+              example:
+                name: "Android"
+                latitude: 50.4489008
+                longitude: 30.4547883
+                timestamp: 1650281539543
+
+  /view:
+    get: 
+      
+      summary: "Get map"
+      
+      description: "Returns the page with the graphical map"
+    
+      responses:
+        200: 
+          description: "Successful response"
+          content:
+            text/html:
+              schema:
+                type: "string"
+              example: "Not found"
