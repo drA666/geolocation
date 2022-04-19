@@ -15,8 +15,9 @@ let _create = options => {
 let _delete = options => {
   let result 
   let index = findIndex( coords, p => p.devid == options.id )
-  if ( index >= 0 ) {
+  while ( index >= 0 ) {
     result = coords.splice( index, 1 )
+	index = findIndex( coords, p => p.devid == options.id )
   }
   return result
 }
