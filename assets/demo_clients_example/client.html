@@ -1,0 +1,91 @@
+<html>
+<head>
+    <meta charset="utf-8">
+
+<script>
+    //опции для получения координат
+    var options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
+//колбек для обработки получения координат
+    function success(pos) {
+        var crd = pos.coords;
+        document.getElementById("demo").innerHTML = "Ваше поточне місцезнаходження: "+
+            "Широта: " +  crd.latitude +
+            " Довгота: " + crd.longitude +
+            " +- " + crd.accuracy + " метрів.";
+			SendCoords(crd.latitude,crd.longitude);
+    };
+//обработка ошибки получения координат
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+
+    //выполнить запрос Get
+    function httpGet(theUrl)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        xmlHttp.setRequestHeader("Access-Control-Allow-Origin","origin-list");
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+
+    //выполнить запрос Post
+    function httpPost(theUrl, object_to_send)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "POST", theUrl, true ); // false for synchronous request
+		xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xmlHttp.send(JSON.stringify(object_to_send) );
+        return xmlHttp.responseText;
+    }
+
+    //выполнить запрос Delete
+    function httpDelete(theUrl)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "DELETE", theUrl, true ); 
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+
+    //очистить все маршруты
+    function CleanALL(){
+        serverpath = document.getElementById("serveradress").value;
+        var coords = JSON.parse(httpGet("http://"+serverpath+"/api/coords"));
+		//фильтруем уникальные ID устройств
+        let deviceids = [
+            ...new Map(coords.map((item) => [item.devid, item])).values(),
+        ];
+        deviceids.forEach(deviceid=>
+            httpDelete("http://" + serverpath + "/api/coords?id=" + deviceid.devid)
+
+        );
+    }
+
+    function SendCoords(lat, lng){
+		devid=document.getElementById("devid").value;
+        serverpath = document.getElementById("serveradress").value;
+		httpPost("http://"+serverpath+"/api/coords", {"id": devid, "latitude": lat, "longitude": lng, "timestamp": Date.now()})
+	}
+	
+    function TimerProcess() {navigator.geolocation.getCurrentPosition(success,error,options);}
+	
+    function StartProcess() { TimerProcess(); window.setInterval(TimerProcess, 10000)};
+    function StopProcess() { window.clearInterval(TimerProcess)};
+</script>
+</head>
+<body >
+<div id="demo"></div>
+<div>адреса сервера </div>
+<input id="serveradress" type="url" value="127.0.0.1:8080">
+<div>id </div>
+<input id="devid" type="text">
+<div><input id="cleanall" type="button" value="Очистити всі маршрути" onclick="CleanALL()"><br></div>
+<div><input id="start" type="button" value="Почати маршрут" onclick="StartProcess()"><br></div>
+<div><input id="stop" type="button" value="Остановити маршрут" onclick="StopProcess()"><br></div>
+</body>
+</html>
